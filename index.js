@@ -1,22 +1,41 @@
-var http = require('http');
-var user = require('./user');
-var router = require('./router');
+
+var Quote = require('./quote');
+
 
 var port = process.env['PORT'] || 3000;
 
-function handleReponse(req, res) {
-  var routerParsed = router.parse(req.url);
-  if (routerParsed == null) {
-    res.setHeader('Status', '404');
-    res.write('404 not found');
-    res.end();
-  }
-  req.route = routerParsed;
-  req.route.value(req, res);
-}
+var express = require('express');
+var bodyParser = require('body-parser')
 
-var server = http.createServer(handleReponse);
+var app = express();
+app.set('view engine', 'ejs');
 
-server.listen(port, function() {
+app.use(bodyParser.json());
+
+app.get('/', function(req, res) {
+  res.render('index', {mesg: 'Cats are awesome!'});
+});
+
+app.get('/quotes', function (req, res) {
+  Quote.find().exec(function(err, quotes) {
+    if (err) {
+      return res.send(500, err);
+    }
+    res.send(quotes);
+  });
+});
+
+app.post('/quotes', function (req, res) {
+  var quote = new Quote(req.body);
+  quote.save(function(err) {
+    if (err) {
+      return res.send(500, err);
+    } else {
+      res.send(quote);
+    }
+  });
+});
+
+app.listen(port, function() {
   console.log("Listening on " + port);
 });

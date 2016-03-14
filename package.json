@@ -9,6 +9,9 @@
   "author": "James",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.15.0",
+    "ejs": "^2.4.1",
+    "express": "^4.13.4",
     "fast-router": "^1.0.3"
   }
 }
